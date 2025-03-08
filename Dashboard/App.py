@@ -58,7 +58,7 @@ with content:
     elif menu == "⛅ Visualisasi Berdasarkan Cuaca":
         st.subheader("⛅ Penyewaan Sepeda Berdasarkan Kondisi Cuaca")
         fig, ax = plt.subplots(figsize=(10, 6))
-        sns.barplot(x="weathersit", y="cnt", data=day_df, estimator=sum, ci=None, palette="coolwarm", ax=ax)
+        sns.barplot(x="weathersit", y="cnt", data=day_df, ci=None, palette="coolwarm", ax=ax)
         plt.xticks(ticks=[0, 1, 2, 3], labels=["Cerah", "Berkabut", "Hujan Ringan", "Hujan Lebat"])
         plt.xlabel("Kondisi Cuaca")
         plt.ylabel("Jumlah Penyewa")
