@@ -24,6 +24,7 @@ season_order = ["Spring", "Summer", "Fall", "Winter"]
 
 st.set_page_config(page_title="Dashboard Penyewaan Sepeda", page_icon="🚴", layout="wide")
 st.title("🚴 Dashboard Penyewaan Sepeda")
+st.markdown("<h1 style='color:red; font-weight:bold;'>Rizki Ilhamnuddin Muria MC009D5Y1602</h1>", unsafe_allow_html=True)
 
 menu = st.radio("Pilih Tampilan:", ["🏠 Beranda", "📆 Cuaca & Hari", "❄️ Penyewaan Berdasarkan Musim", "🕒 Penyewaan Per Jam", "📊 Statistik Data"])
 
