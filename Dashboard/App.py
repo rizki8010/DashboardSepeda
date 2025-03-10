@@ -72,8 +72,8 @@ with content:
         st.pyplot(fig)
         
     elif menu == "📊 Statistik Data":
-    st.subheader("📊 Statistik Data Penyewaan Sepeda")
-    st.write("### Data Penyewaan Harian")
-    st.dataframe(day_df.select_dtypes(include=["number"]).describe())
-    st.write("### Data Penyewaan Per Jam")
-    st.dataframe(hour_df.select_dtypes(include=["number"]).describe())
+        st.subheader("📊 Statistik Data Penyewaan Sepeda")
+        st.write("### Data Penyewaan Harian")
+        st.dataframe(day_df.select_dtypes(include=["number"]).describe())
+        st.write("### Data Penyewaan Per Jam")
+        st.dataframe(hour_df.select_dtypes(include=["number"]).describe())
