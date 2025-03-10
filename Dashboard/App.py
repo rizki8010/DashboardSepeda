@@ -36,6 +36,7 @@ with content:
         - 📆 Pengaruh Cuaca dan Hari terhadap Penyewaan
         - ❄️ Tren Penyewaan Berdasarkan Musim
         - 🕒 Penyewaan Berdasarkan Jam
+        - 📊 Statistik Data
         """)
 
     elif menu == "📆 Cuaca & Hari":
