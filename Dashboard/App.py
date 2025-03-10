@@ -25,7 +25,7 @@ season_order = ["Spring", "Summer", "Fall", "Winter"]
 st.set_page_config(page_title="Dashboard Penyewaan Sepeda", page_icon="🚴", layout="wide")
 st.title("🚴 Dashboard Penyewaan Sepeda")
 
-menu = st.radio("Pilih Tampilan:", ["🏠 Beranda", "📆 Cuaca & Hari", "❄️ Penyewaan Berdasarkan Musim", "🕒 Penyewaan Per Jam"])
+menu = st.radio("Pilih Tampilan:", ["🏠 Beranda", "📆 Cuaca & Hari", "❄️ Penyewaan Berdasarkan Musim", "🕒 Penyewaan Per Jam", "📊 Statistik Data"])
 
 content = st.container()
 with content:
@@ -68,7 +68,7 @@ with content:
         plt.title("Jumlah Penyewaan Sepeda Berdasarkan Jam")
         plt.xticks(range(24))
         st.pyplot(fig)
-elif menu == "📊 Statistik Data":
+    elif menu == "📊 Statistik Data":
         st.subheader("📊 Statistik Data Penyewaan Sepeda")
         st.write("### Data Penyewaan Harian")
         st.dataframe(day_df.describe())
