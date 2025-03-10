@@ -73,7 +73,16 @@ with content:
         
     elif menu == "📊 Statistik Data":
         st.subheader("📊 Statistik Data Penyewaan Sepeda")
+
+        day_df_stat = day_df.copy()
+        hour_df_stat = hour_df.copy()
+
+        day_df_stat["weathersit"] = day_df_stat["weathersit"].map({v: k for k, v in cuaca_mapping.items()})
+        day_df_stat["weekday"] = day_df_stat["weekday"].map({v: k for k, v in hari_mapping.items()})
+        day_df_stat["season"] = day_df_stat["season"].map({v: k for k, v in season_mapping.items()})
+
         st.write("### Data Penyewaan Harian")
-        st.dataframe(day_df.select_dtypes(include=["number"]).describe())
+        st.dataframe(day_df_stat.describe())  
+
         st.write("### Data Penyewaan Per Jam")
-        st.dataframe(hour_df.select_dtypes(include=["number"]).describe())
+        st.dataframe(hour_df_stat.describe())
