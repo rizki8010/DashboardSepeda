@@ -68,3 +68,9 @@ with content:
         plt.title("Jumlah Penyewaan Sepeda Berdasarkan Jam")
         plt.xticks(range(24))
         st.pyplot(fig)
+elif menu == "📊 Statistik Data":
+        st.subheader("📊 Statistik Data Penyewaan Sepeda")
+        st.write("### Data Penyewaan Harian")
+        st.dataframe(day_df.describe())
+        st.write("### Data Penyewaan Per Jam")
+        st.dataframe(hour_df.describe())
