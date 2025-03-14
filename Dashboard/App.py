@@ -4,85 +4,133 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Load dataset
-day_df = pd.read_csv("Dashboard/dayCleaned.csv")
-hour_df = pd.read_csv("Dashboard/hourCleaned.csv")
+day_df = pd.read_csv("dayCleaned.csv")
+hour_df = pd.read_csv("hourCleaned.csv")
 
-# Mapping manual
-cuaca_mapping = {1: "Cerah", 2: "Berawan", 3: "Hujan Ringan", 4: "Hujan Lebat"}
-hari_mapping = {0: "Senin", 1: "Selasa", 2: "Rabu", 3: "Kamis", 4: "Jum'at", 5: "Sabtu", 6: "Minggu"}
-season_mapping = {1: "Spring", 2: "Summer", 3: "Fall", 4: "Winter"}
+st.set_page_config(
+    page_title="Dashboard Penyewaan Sepeda", page_icon="🚴", layout="wide"
+)
 
-# Apply mapping
-day_df["weathersit"] = day_df["weathersit"].map(cuaca_mapping)
-day_df["weekday"] = day_df["weekday"].map(hari_mapping)
-day_df["season"] = day_df["season"].map(season_mapping)
-
-# Order untuk visualisasi
-cuaca_order = ["Cerah", "Berawan", "Hujan Ringan", "Hujan Lebat"]
-hari_order = ["Senin", "Selasa", "Rabu", "Kamis", "Jum'at", "Sabtu", "Minggu"]
-season_order = ["Spring", "Summer", "Fall", "Winter"]
-
-st.set_page_config(page_title="Dashboard Penyewaan Sepeda", page_icon="🚴", layout="wide")
 st.title("🚴 Dashboard Penyewaan Sepeda")
-st.markdown("<h1 style='color:red; font-weight:bold;'>Rizki Ilhamnuddin Muria MC009D5Y1602</h1>", unsafe_allow_html=True)
+st.markdown(
+    '<p style="color:red; font-weight:bold;">Rizki Ilhamnuddin Muria mc009d5y1602</p>',
+    unsafe_allow_html=True,
+)
 
-menu = st.radio("Pilih Tampilan:", ["🏠 Beranda", "📆 Cuaca & Hari", "❄️ Penyewaan Berdasarkan Musim", "🕒 Penyewaan Per Jam", "📊 Statistik Data"])
+# Sidebar Filters
+st.sidebar.header("🔍 Filter Data")
+date_start = st.sidebar.date_input("Pilih Tanggal Awal:", pd.to_datetime("2011-01-01"))
+date_end = st.sidebar.date_input("Pilih Tanggal Akhir:", pd.to_datetime("2012-12-31"))
 
-content = st.container()
-with content:
-    if menu == "🏠 Beranda":
-        st.subheader("🏠 Beranda")
-        st.markdown("""
-        **Fitur utama:**
-        - 📆 Pengaruh Cuaca dan Hari terhadap Penyewaan
-        - ❄️ Tren Penyewaan Berdasarkan Musim
-        - 🕒 Penyewaan Berdasarkan Jam
-        - 📊 Statistik Data
-        """)
+# Filter musim dan cuaca berdasarkan tanggal yang dipilih
+filtered_day_df = day_df[
+    (day_df["date"] >= str(date_start)) & (day_df["date"] <= str(date_end))
+]
+filtered_hour_df = hour_df[
+    (hour_df["date"] >= str(date_start)) & (hour_df["date"] <= str(date_end))
+]
 
-    elif menu == "📆 Cuaca & Hari":
-        st.subheader("📆 Penyewaan Sepeda Berdasarkan Cuaca dan Hari")
-        fig, ax = plt.subplots(figsize=(12, 6))
-        sns.barplot(x="weathersit", y="cnt", hue="weekday", data=day_df,
-                    order=cuaca_order, hue_order=hari_order, errorbar=None, ax=ax)
-        plt.xlabel("Cuaca")
-        plt.ylabel("Jumlah Penyewa")
-        plt.title("Registrasi User Berdasarkan Hari dan Cuaca")
-        plt.legend(title="Hari")
-        st.pyplot(fig)
-    
-    elif menu == "❄️ Penyewaan Berdasarkan Musim":
-        st.subheader("❄️ Penyewaan Sepeda Berdasarkan Musim")
-        fig, ax = plt.subplots(figsize=(10, 6))
-        sns.barplot(x="season", y="cnt", data=day_df, order=season_order, errorbar=None, ax=ax)
-        plt.xlabel("Musim")
-        plt.ylabel("Jumlah Penyewa")
-        plt.title("Registrasi User Berdasarkan Musim")
-        st.pyplot(fig)
-    
-    elif menu == "🕒 Penyewaan Per Jam":
-        st.subheader("🕒 Penyewaan Sepeda Berdasarkan Jam")
-        fig, ax = plt.subplots(figsize=(20, 8))
-        sns.lineplot(x="hr", y="cnt", data=hour_df, estimator="sum", ax=ax)
-        plt.grid(axis='x', linestyle='--', alpha=0.7)
-        plt.xlabel("Jam dalam Sehari")
-        plt.ylabel("Jumlah Penyewaan")
-        plt.title("Jumlah Penyewaan Sepeda Berdasarkan Jam")
-        plt.xticks(range(24))
-        st.pyplot(fig)
-        
-    elif menu == "📊 Statistik Data":
-        st.subheader("📊 Statistik Data Penyewaan Sepeda")
+season_options = sorted(filtered_day_df["season"].unique())
+season_selected = st.sidebar.multiselect(
+    "Pilih Musim:", season_options, default=season_options
+)
 
-        day_df_stat = day_df.copy()
-        hour_df_stat = hour_df.copy()
+weather_options = sorted(filtered_hour_df["weathersit"].unique())
+weather_selected = st.sidebar.multiselect(
+    "Pilih Cuaca:", weather_options, default=weather_options
+)
 
-        day_df_stat["weathersit"] = day_df_stat["weathersit"].map({v: k for k, v in cuaca_mapping.items()})
-        day_df_stat["weekday"] = day_df_stat["weekday"].map({v: k for k, v in hari_mapping.items()})
-        day_df_stat["season"] = day_df_stat["season"].map({v: k for k, v in season_mapping.items()})
+time_range = st.sidebar.slider("Pilih Rentang Jam:", 0, 23, (0, 23))
 
-        st.write("### Data Penyewaan Harian")
-        st.dataframe(day_df_stat.describe())  
+# Apply Filters
+if season_selected:
+    filtered_day_df = filtered_day_df[filtered_day_df["season"].isin(season_selected)]
+    filtered_hour_df = filtered_hour_df[
+        filtered_hour_df["season"].isin(season_selected)
+    ]
+if weather_selected:
+    filtered_hour_df = filtered_hour_df[
+        filtered_hour_df["weathersit"].isin(weather_selected)
+    ]
 
-        st.write("### Data Penyewaan Per Jam")
-        st.dataframe(hour_df_stat.describe())
+filtered_hour_df = filtered_hour_df[
+    filtered_hour_df["hr"].between(time_range[0], time_range[1])
+]
+
+# New Visualization Tabs
+tab1, tab2, tab3, tab4 = st.tabs(
+    [
+        "🔄 Perbandingan Cuaca",
+        "⏳ Distribusi Waktu",
+        "📅 Analisis Hari",
+        "📊 Tren Penyewaan",
+    ]
+)
+
+with tab1:
+    st.subheader("🔄 Total Penyewaan Sepeda Berdasarkan Cuaca")
+    fig, ax = plt.subplots(figsize=(10, 6))
+    sns.barplot(
+        x="weathersit",
+        y="cnt",
+        data=filtered_hour_df,
+        estimator=sum,
+        palette="coolwarm",
+        ax=ax,
+    )
+    ax.set_xlabel("Cuaca")
+    ax.set_ylabel("Total Penyewa")
+    ax.set_title("Total Penyewaan Sepeda Berdasarkan Cuaca")
+    st.pyplot(fig)
+
+with tab2:
+    st.subheader("⏳ Total Penyewaan Berdasarkan Jam")
+    fig, ax = plt.subplots(figsize=(12, 6))
+    ax.set_xticks(range(0, 24))
+    sns.lineplot(
+        x="hr",
+        y="cnt",
+        data=filtered_hour_df,
+        estimator=sum,
+        marker="o",
+        color="purple",
+        ax=ax,
+    )
+    ax.set_xlabel("Jam dalam Sehari")
+    ax.set_ylabel("Total Penyewa")
+    ax.set_title("Total Penyewaan Sepeda Berdasarkan Jam")
+    st.pyplot(fig)
+
+with tab3:
+    st.subheader("📅 Total Penyewaan Berdasarkan Hari")
+    fig, ax = plt.subplots(figsize=(10, 6))
+    sns.barplot(
+        x="weekday",
+        y="cnt",
+        data=filtered_hour_df,
+        estimator=sum,
+        palette="viridis",
+        ax=ax,
+    )
+    ax.set_xlabel("Hari dalam Seminggu")
+    ax.set_ylabel("Total Penyewa")
+    ax.set_title("Total Penyewaan Sepeda Berdasarkan Hari")
+    st.pyplot(fig)
+
+with tab4:
+    st.subheader("📊 Tren Penyewaan Sepeda")
+    fig, ax = plt.subplots(figsize=(12, 6))
+    sns.lineplot(
+        x="date",
+        y="cnt",
+        data=filtered_day_df,
+        estimator=sum,
+        marker="o",
+        color="blue",
+        ax=ax,
+    )
+    ax.set_xlabel("Tanggal")
+    ax.set_ylabel("Total Penyewa")
+    ax.set_title("Tren Penyewaan Sepeda dari Waktu ke Waktu")
+    plt.xticks(rotation=45)
+    st.pyplot(fig)
