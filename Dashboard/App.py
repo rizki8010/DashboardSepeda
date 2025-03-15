@@ -107,7 +107,7 @@ with tab3:
     sns.barplot(
         x="weekday",
         y="cnt",
-        data=filtered_hour_df,
+        data=filtered_day_df,
         estimator=sum,
         palette="viridis",
         ax=ax,
